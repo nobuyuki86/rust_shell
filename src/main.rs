@@ -5,7 +5,7 @@ use std::{
     process::Command,
 };
 
-fn main() {
+fn main() -> ! {
     loop {
         print!("> ");
         stdout().flush();
@@ -25,9 +25,13 @@ fn main() {
                     eprintln!("{}", e);
                 }
             }
+            "exit" => return,
             command => {
-                let mut child = Command::new(command).args(args).spawn().unwrap();
-                child.wait();
+                let mut child = Command::new(command).args(args).spawn();
+                match child {
+                    Ok(child) => child.wait(),
+                    Err(e) => eprintln!("{}", e),
+                };
             }
         }
     }
